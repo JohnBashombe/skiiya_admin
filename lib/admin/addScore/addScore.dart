@@ -293,6 +293,10 @@ class _AddGameScoreState extends State<AddGameScore> {
       print('Scores: ${_getGameTicket['teamScores'][_i]}');
       print('Results: ${_getGameTicket['teamResults'][_i]}');
       print('--------------- END OF DETAILS ---------------------');
+
+      // DO THE UPDATE BETSLIP LOGIC HERE
+      // BY GETTING THE RIGHT WINNING VALUE FROM _GAME_ODDS VARIABLE
+      // GET THE RIGHT WINNING VALUE HERE
     }
   }
 }
