@@ -253,11 +253,15 @@ class _AddGameScoreState extends State<AddGameScore> {
 
   void updateSingleBetslipWithThisGame(
       var _game, var _gameODDS, var _currentBetslip) {
+    // WE GET THE GAME ON TICKET INITIALIZER
+    // GET EVERY SINGLE GAME ON THE TICKET
+    var _getGameTicket = _currentBetslip['matches'];
     // WE HAVE THE ACTUAL GAME
     // WE HAVE ALL ODDS WITH THEIR RESULTS ASSOCIATED TO IT
     // THEN WE HAVE THE BETSLIP TO UPDATE FINALLY
     //.................
     // WE GET THE CHOICE IN A CURRENT BETSLIP
+    // WE GET THE RIGHT GAME INDEX OF THE GAME FROM THE BETSLIP
     // GET ALL THE ODD DETAILS,
     // THEN FETCH THAT PARTICULAR RESULT IN THE GAME ODDS
     // FINALLY UPDATE THE BETSLIP WITH THE NEW RESULTS
@@ -266,37 +270,55 @@ class _AddGameScoreState extends State<AddGameScore> {
     //.................
     // GET THE LENGTH OF THE BETSLIP DATA
     // int _dataLength = _currentBetslip['rewards']['number_of_games'];
-    int _dataLength = _currentBetslip['matches']['gameIDs'].length;
+    int _dataLength = _getGameTicket['gameIDs'].length;
+    // THIS CONTAINS THE GAME POSITION INTO THESE ARRAYS OF BETSLIP
+    // WE NEED TO GET THE RIGHT INDEX TO UPDATE THE RIGHT DATA IN THE ARRAY
+    // SETTING IT INITIALLY TO A NON ARRAY VALUE
+    int _gamePos = -1;
+    // LET US GET THE ID OOF THE GAME
+    String _gameID = _game['id'].toString();
     // LOOP THROUGH ALL GAMES ON THE TICKET TO GET EXACT OPTIONS
     for (int _i = 0; _i < _dataLength; _i++) {
-      // GET EVERY SINGLE GAME ON THE TICKET
-      var _getGameTicket = _currentBetslip['matches'];
-      // SHOWING RESULTS HERE
-      // WE GET THE ODD ID
-      int _oddID = _getGameTicket['oddIDs'][_i];
-      // WE GET THE ODD NAME
-      String _oddName = _getGameTicket['oddNames'][_i];
-      // WE GET THE ODD INDEX
-      int _oddIndex = _getGameTicket['oddIndexes'][_i];
-      // WE GET THE ODD LABEL
-      String _oddLabel = _getGameTicket['oddLabels'][_i];
-      // PRINTING RESULTS MORE DETAILS
-      print('------- SHOWING GAME ON TICKET DETAILS -----------');
-      print('Game ID: ${_getGameTicket['gameIDs'][_i]}');
-      print('Odd ID: ${_getGameTicket['oddIDs'][_i]}');
-      print('OddName: ${_getGameTicket['oddNames'][_i]}');
-      print('OddIndex: ${_getGameTicket['oddIndexes'][_i]}');
-      print('OddLabel: ${_getGameTicket['oddLabels'][_i]}');
-      print('OddValue: ${_getGameTicket['oddValues'][_i]}');
-      print('OddTotal: ${_getGameTicket['oddTotals'][_i]}');
-      print('OddHandicap: ${_getGameTicket['oddHandicaps'][_i]}');
-      print('Scores: ${_getGameTicket['teamScores'][_i]}');
-      print('Results: ${_getGameTicket['teamResults'][_i]}');
-      print('--------------- END OF DETAILS ---------------------');
-
-      // DO THE UPDATE BETSLIP LOGIC HERE
-      // BY GETTING THE RIGHT WINNING VALUE FROM _GAME_ODDS VARIABLE
-      // GET THE RIGHT WINNING VALUE HERE
+      // COMPARE THE CURRENT GAME ID WITH ALL IDS IN GAME IDS ARRAY FROM BETSLIP
+      if (_getGameTicket['gameIDs'][_i].toString().compareTo(_gameID) == 0) {
+        // IF IT MATCHES, SET THE MATCH INDEX TO THIS VERY CURRENT INDEX
+        _gamePos = _i;
+        // WE BREAK THE LOOP FOR A FASTER PROCESSING
+        break;
+      }
     }
+
+    // SHOWING RESULTS HERE
+    // WE GET THE ODD ID
+    int _oddID = _getGameTicket['oddIDs'][_gamePos];
+    // WE GET THE ODD NAME
+    String _oddName = _getGameTicket['oddNames'][_gamePos];
+    // WE GET THE ODD INDEX
+    int _oddIndex = _getGameTicket['oddIndexes'][_gamePos];
+    // WE GET THE ODD LABEL
+    String _oddLabel = _getGameTicket['oddLabels'][_gamePos];
+    // PRINTING RESULTS MORE DETAILS
+    print('------- SHOWING SPECIFIC GAME ON TICKET DETAILS -----------');
+    print('Game ID: ${_getGameTicket['gameIDs'][_gamePos]}');
+    print('Odd ID: ${_getGameTicket['oddIDs'][_gamePos]}');
+    print('OddName: ${_getGameTicket['oddNames'][_gamePos]}');
+    print('OddIndex: ${_getGameTicket['oddIndexes'][_gamePos]}');
+    print('OddLabel: ${_getGameTicket['oddLabels'][_gamePos]}');
+    print('OddValue: ${_getGameTicket['oddValues'][_gamePos]}');
+    print('OddTotal: ${_getGameTicket['oddTotals'][_gamePos]}');
+    print('OddHandicap: ${_getGameTicket['oddHandicaps'][_gamePos]}');
+    print('Scores: ${_getGameTicket['teamScores'][_gamePos]}');
+    print('Results: ${_getGameTicket['teamResults'][_gamePos]}');
+    print('--------------- END OF DETAILS ---------------------');
+
+    // DO THE UPDATE BETSLIP LOGIC HERE
+    // BY GETTING THE RIGHT WINNING VALUE FROM _GAME_ODDS VARIABLE
+    // GET THE RIGHT WINNING VALUE HERE
+
+    // WE NOW HAVE THE RIGHT INDEX OF THE GAME IN THE BETSLIP
+    // ALL WE HAVE TO DO IS TO GET THE RIGHT RESULT FROM ODDS ARRAY
+    // AND UPDATE THE TICKET RESULTS OF THE BETSLIP
+
+    // WORKING...
   }
 }
