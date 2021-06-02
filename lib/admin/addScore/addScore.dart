@@ -294,7 +294,7 @@ class _AddGameScoreState extends State<AddGameScore> {
     // WE GET THE ODD NAME
     String _oddName = _getGameTicket['oddNames'][_gamePos];
     // WE GET THE ODD INDEX
-    int _oddIndex = _getGameTicket['oddIndexes'][_gamePos];
+    // int _oddIndex = _getGameTicket['oddIndexes'][_gamePos];
     // WE GET THE ODD LABEL
     String _oddLabel = _getGameTicket['oddLabels'][_gamePos];
     // PRINTING RESULTS MORE DETAILS
@@ -320,5 +320,114 @@ class _AddGameScoreState extends State<AddGameScore> {
     // AND UPDATE THE TICKET RESULTS OF THE BETSLIP
 
     // WORKING...
+    print(
+        '-- -- -- -- - -- - -- - - RANDOM DATA INIT - -- - - - - - -- - - -- - ');
+    print(_gameODDS['odds'][0]['id']); // ODD ID [1]
+    print(_gameODDS['odds'][0]['name']); // ODD NAME [1x2]
+    // WE WILL LOOP TO GET THE RIGHT GAME ODD ID POSITION
+    print(_gameODDS['odds'][0]['bookmaker']['data'][0]['id']); // BOOKMAKER ID
+    // BOOKMAKER NAME
+    print(_gameODDS['odds'][0]['bookmaker']['data'][0]['name']);
+    // data loop
+    print(_gameODDS['odds'][0]['bookmaker']['data'][0]['odds']['data'][0]
+        ['label']);
+    print(_gameODDS['odds'][0]['bookmaker']['data'][0]['odds']['data'][0]
+        ['value']);
+    print(_gameODDS['odds'][0]['bookmaker']['data'][0]['odds']['data'][0]
+        ['winning']);
+    print(
+        '-- -- -- -- - -- - -- - - RANDOM DATA END- -- - - - - - -- - - -- - ');
+
+    // GET THE POSITION ODD ID OF DATA HERE
+    int _bigPos = -1;
+    // LOOP TO GET THE RIGHT INDEX OF THE ODD
+    for (int _j = 0; _j < _gameODDS['odds'].length; _j++) {
+      // CHECK IF WE HAVE A MATCHED DATA
+      if ((_gameODDS['odds'][_j]['id']
+                  .toString()
+                  .compareTo(_oddID.toString()) ==
+              0) &&
+          (_gameODDS['odds'][_j]['name']
+                  .toString()
+                  .compareTo(_oddName.toString()) ==
+              0)) {
+        // BREAK THE LOOP IF FOUND
+        _bigPos = _j;
+        break;
+      }
+    }
+    // GETTING THE INDEX FROM THE CURRENT POSITION
+    int _smallPos = -1;
+    // LOOP TO GET THE RIGHT INDEX OF THE ODD INDEX
+    // THIS IS THE ARRAY TAHT POINTS TO SUB-CONTENT
+    var _smallPosData =
+        _gameODDS['odds'][_bigPos]['bookmaker']['data'][0]['odds']['data'];
+    // LOOPING TO GET THE RIGHT INDEX HERE TOO
+    for (int _j = 0; _j < _smallPosData.length; _j++) {
+      // CHECK IF WE HAVE A MATCHED DATA
+      if (_smallPosData[_j]['label'].toString().compareTo(_oddLabel) == 0) {
+        // BREAK THE LOOP IF FOUND
+        _smallPos = _j;
+        break;
+      }
+    }
+
+    if (_bigPos != -1 && _smallPos != -1) {
+      // WE ARE NOW PRINTING THE RIGHT DATA VALUE
+      print(
+          '-- -- -- -- - -- - -- - - RANDOM DATA INIT - -- - - - - - -- - - -- - ');
+      print(_gameODDS['odds'][_bigPos]['id']); // ODD ID [1]
+      print(_gameODDS['odds'][_bigPos]['name']); // ODD NAME [1x2]
+      // WE WILL LOOP TO GET THE RIGHT GAME ODD ID POSITION
+      // BOOKMAKER ID
+      print(_gameODDS['odds'][_bigPos]['bookmaker']['data'][0]['id']);
+      // BOOKMAKER NAME
+      print(_gameODDS['odds'][_bigPos]['bookmaker']['data'][0]['name']);
+      // data loop
+      print(_gameODDS['odds'][_bigPos]['bookmaker']['data'][0]['odds']['data']
+          [_smallPos]['label']);
+      print(_gameODDS['odds'][_bigPos]['bookmaker']['data'][0]['odds']['data']
+          [_smallPos]['value']);
+      print(_gameODDS['odds'][_bigPos]['bookmaker']['data'][0]['odds']['data']
+          [_smallPos]['winning']);
+      print(
+          '-- -- -- -- - -- - -- - - RANDOM DATA END- -- - - - - - -- - - -- - ');
+
+      // GET THE RIGHT WINNING OF THIS GAME FROM ODDS COLLECTION
+      var _winning = _gameODDS['odds'][_bigPos]['bookmaker']['data'][0]['odds']
+          ['data'][_smallPos]['winning'];
+      // GET THE RIGHT GAME SCORES HERE TOO FROM FOOTBALL COLLECTION
+      var _scores = _game['scores'];
+      // THIS IS EQUAL TO THE CURRENT TEAM SCORES OF THE BETSLIP
+      var _scoreUpdated = _getGameTicket['teamScores'];
+      // WE UPDATE THE SPECIFIC DATA AT INDEX _GAME_POSITION
+      _scoreUpdated[_gamePos] = _scores;
+
+      // THIS IS EQUAL TO THE CURRENT TEAM SCORES OF THE BETSLIP
+      var _resultUpdated = _getGameTicket['teamResults'];
+      // WE UPDATE THE SPECIFIC DATA AT INDEX _GAME_POSITION
+      _resultUpdated[_gamePos] = _winning;
+
+      // PRINTING LAST DATA
+      print('SCORES: $_scores');
+      print('RESULT: $_winning');
+
+      // print('Results: ${_getGameTicket['teamResults'][_gamePos]}');
+      // GET THE BETSLIP ID
+      String _betslipID = _currentBetslip.documentID.toString();
+
+      Firestore.instance.collection('betslip').document(_betslipID).updateData(
+        {
+          'teamScores': _scoreUpdated, // UPDATE SCORE AT SPECIFIC INDEX ONLY
+          'teamResults': _resultUpdated, // UPDATE RESULT AT SPECIFIC INDEX ONLY
+        },
+      ).then((value) {
+        print('The betslip of ID: $_betslipID has been updated successfully');
+      }).catchError((e) {
+        print('Error ocuured while updating betslip of ID: $_betslipID');
+      });
+    } else {
+      print('Sorry, We could not verify this data');
+    }
   }
 }
