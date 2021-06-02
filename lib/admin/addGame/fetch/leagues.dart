@@ -35,7 +35,7 @@ class Leagues {
             .document(
                 'league') // WE SET A FIXED ID HERE TO AVOID MULTIPLE DATA WRITING
             .setData({'data': leagues}).then((_result) {
-          print('Leagues added successfully');
+          // print('Leagues added successfully');
         }).catchError((e) {
           print('adding leagues error: ${e.toString()}');
         });

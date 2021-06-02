@@ -17,7 +17,7 @@ Countries _countries = new Countries();
 // Will stoore the user variable
 FirebaseUser user;
 // THE LOADER FOR ADDING MATCHES ACTION BUTTON
-bool _addingMatchLoader = false;
+bool _showLoadingButton = false;
 // TRACK IF WE HAVE NEW RESULTS FROM THE API
 int _newData = 0;
 
@@ -135,7 +135,7 @@ class _AddNewGameState extends State<AddNewGame> {
                     SizedBox(height: 10.0),
                     Container(
                       width: double.infinity,
-                      child: _addingMatchLoader
+                      child: _showLoadingButton
                           ? RawMaterialButton(
                               padding: new EdgeInsets.symmetric(
                                   vertical: 15.0, horizontal: 15.0),
@@ -170,7 +170,7 @@ class _AddNewGameState extends State<AddNewGame> {
                                   setState(() {
                                     if (Selection.user != null) {
                                       // ADD MATCH BY SHOWING THE LOADING BUTTON
-                                      _addingMatchLoader = true;
+                                      _showLoadingButton = true;
                                       // print('adding the game to database');
                                       print(
                                           'We will load more new games if any.');
@@ -247,6 +247,7 @@ class _AddNewGameState extends State<AddNewGame> {
 
     int _tracker = 0;
 
+    // for (int _moreDays = 0; _moreDays < 1; _moreDays++) {
     for (int _moreDays = 0; _moreDays < maxDaysCount; _moreDays++) {
       // BUILD A NEW DATE FROM THE NEWLY CALCULATED SECONDS
       DateTime _ref = DateTime.fromMillisecondsSinceEpoch(_dayDiff);
@@ -254,6 +255,7 @@ class _AddNewGameState extends State<AddNewGame> {
       String todayDate =
           '${_ref.year.toString()}-${_ref.month.toString()}-${_ref.day.toString()}';
       // Load only once for date specification
+      // _fetchMatch.fetchMatches('2021-04-30').then((value) {
       _fetchMatch.fetchMatches(todayDate).then((value) {
         // CHECK IF WE HAVE ACTUAL VALUES BEFORE ADDING TO THE LIST
         if (value.isNotEmpty) {
@@ -262,7 +264,7 @@ class _AddNewGameState extends State<AddNewGame> {
               // Do a checking to display only available matches
               _matches.addAll(value);
               // STOP THE LOADING WHEN COMPLETED
-              _addingMatchLoader = false;
+              _showLoadingButton = false;
               _newData = 1;
               print('loading completed');
               // print('Size: ${_matches.length}');
@@ -272,7 +274,7 @@ class _AddNewGameState extends State<AddNewGame> {
           if (mounted)
             setState(() {
               _newData = 2;
-              _addingMatchLoader = false;
+              _showLoadingButton = false;
               print('No data has been found');
             });
         }

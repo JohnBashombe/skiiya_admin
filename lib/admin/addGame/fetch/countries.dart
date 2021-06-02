@@ -57,7 +57,7 @@ class Countries {
         });
       }
     }
-    print('countries added successfully');
+    // print('countries added successfully');
     return countries;
   }
 }

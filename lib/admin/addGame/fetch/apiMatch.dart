@@ -136,19 +136,29 @@ class FetchMatch {
       if (isThere3WayResult) {
         // INSERT THE GAME INTO THE COLLECTIONS NOW
         // Printing the userId out
-        print('Adding the new matches to the database');
-        print(match);
-        print(match.id);
-        print(odds);
+        // print('Adding the new matches to the database');
+        // // print(match);
+        // print(match.id);
+        // print(match.status);
+        // print(match.scores['ft_score']);
+        bool _isScoreUpdated = false;
+        // THIS WILL HELP US LATER TO UPDATE BETSLIP WITH GAMES THAT HAVE RESULTS ALREADY
+        if (match.scores['ft_score'] != null) {
+          _isScoreUpdated = true; // SET TO TRUE IF WE HAVE SCORES ALREADY
+          // print('score detected');
+        }
+        // print(match.visitorTeam['data']['name']);
+        // print(match.localTeam['data']['name']);
+        // print(odds);
         // print('The UserID: ${_user.user.uid} has logged in');
         // IF LOGGED IN, ADD THE GAMES NOW
         // ADD FIRST THE GAMES DETAILS TO football Collection
         // if (App.user == null) {
-        //   print('No user detected'); 
+        //   print('No user detected');
         // } else {
         // print('welcome : ${user.uid}');
         Firestore.instance
-            .collection('football')  
+            .collection('football')
             .document(match.id.toString())
             .setData({
           'id': match.id,
@@ -171,6 +181,8 @@ class FetchMatch {
           'threeWayOdds': match.threeWayOdds,
           'searchKey': match.searchKey,
           'status': match.status,
+          'betslip_updated': false,
+          'score_updated': _isScoreUpdated,
         }).then((_result) {
           // print('Match of ID: ${match.id} added successfully');
         }).catchError((e) {
