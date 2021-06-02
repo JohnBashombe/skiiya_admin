@@ -252,7 +252,7 @@ class _AddGameScoreState extends State<AddGameScore> {
   }
 
   void updateSingleBetslipWithThisGame(
-      var _game, var _gameODDS, var _currentBetslip) {
+      var _game, var _gameODDS, var _currentBetslip) async {
     // WE GET THE GAME ON TICKET INITIALIZER
     // GET EVERY SINGLE GAME ON THE TICKET
     var _getGameTicket = _currentBetslip['matches'];
