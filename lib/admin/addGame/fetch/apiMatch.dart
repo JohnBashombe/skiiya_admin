@@ -181,8 +181,8 @@ class FetchMatch {
           'threeWayOdds': match.threeWayOdds,
           'searchKey': match.searchKey,
           'status': match.status,
-          'betslip_updated': false,
-          'score_updated': _isScoreUpdated,
+          'betslip_updated': false, // INDICATES UPDATE OF BETSLIPS STATUS
+          'score_updated': _isScoreUpdated, // INDICATES SCORES RESULTS STATUS
         }).then((_result) {
           // print('Match of ID: ${match.id} added successfully');
         }).catchError((e) {

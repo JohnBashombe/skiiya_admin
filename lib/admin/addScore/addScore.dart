@@ -1,12 +1,8 @@
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:skiiya_admin/app/skiiyaBet.dart';
 import 'package:skiiya_admin/database/bonus.dart';
-import 'package:skiiya_admin/database/selection.dart';
-import 'package:skiiya_admin/methods/methods.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 
 class AddGameScore extends StatefulWidget {
   const AddGameScore({Key key}) : super(key: key);
@@ -17,7 +13,7 @@ class AddGameScore extends StatefulWidget {
 
 class _AddGameScoreState extends State<AddGameScore> {
   // STORE GAMES TO UPDATES
-  var gameToUpdate = [];
+  // var gameToUpdate = [];
   // BOOL TO SHOW LOADING ACTION BUTTON
   bool _showLoadingButton = false;
 
@@ -28,7 +24,7 @@ class _AddGameScoreState extends State<AddGameScore> {
       child: SingleChildScrollView(
         child: Container(
           width: double.infinity,
-          margin: new EdgeInsets.only(left: 15.0),
+          // margin: new EdgeInsets.only(left: 15.0),
           padding: new EdgeInsets.all(10.0),
           decoration: BoxDecoration(
               border: Border(
@@ -180,7 +176,8 @@ class _AddGameScoreState extends State<AddGameScore> {
   }
 
   void getMatchesWithScores() async {
-    print('Updating the betslips with matches having scores');
+    // print('Updating the betslips with matches having scores');
+    // FETCHING MATCHES
     Firestore.instance
         .collection('football')
         .where('score_updated', isEqualTo: true)
@@ -190,14 +187,14 @@ class _AddGameScoreState extends State<AddGameScore> {
         setState(() {
           _showLoadingButton = false;
           // ADD ALL GAMES TO THE ARRAY OF GAMES WITH FULL SCORES
-          gameToUpdate.addAll(_matches.documents);
+          // gameToUpdate.addAll(_matches.documents);
         });
       // WE LOOP THROUGH ALL DATA FETCHES
-      for (int _i = 0; _i < gameToUpdate.length; _i++) {
+      for (int _i = 0; _i < _matches.documents.length; _i++) {
         // print(gameToUpdate[_i]['localTeam']);
         // print(gameToUpdate[_i]['visitorTeam']);
-        print(gameToUpdate[_i]['id']);
-        String _gameID = gameToUpdate[_i]['id'].toString();
+        // print(gameToUpdate[_i]['id']);
+        String _gameID = _matches.documents[_i]['id'].toString();
         // print('-------------------------------');
         // GET THE ODDS OF EVERY SINGLE MATCH HERE AND STORES IT IN AN ARRAY
         Firestore.instance
@@ -205,10 +202,10 @@ class _AddGameScoreState extends State<AddGameScore> {
             .document(_gameID)
             .get()
             .then((_gameODDS) {
-          print("THIS GAME HAS BEEN LOADED SUCCESSFULLY");
-          print('THIS GAME ID IS: ${_gameODDS['matchId']}');
+          // print("THIS GAME HAS BEEN LOADED SUCCESSFULLY");
+          // print('THIS GAME ID IS: ${_gameODDS['matchId']}');
           // WE ADD THE GAME ODDS ALONG WITH THE SPECIFIED GAME
-          fetchBetslipWithThisGame(gameToUpdate[_i], _gameODDS);
+          fetchBetslipWithThisGame(_matches.documents[_i], _gameODDS);
         });
       }
     });
@@ -216,11 +213,11 @@ class _AddGameScoreState extends State<AddGameScore> {
 
   void fetchBetslipWithThisGame(var game, var gameODDS) async {
     // START TO UPDATE THIS CURRENT GAME
-    print('=========================================');
-    print('GAME DETAILS: ${game['id']}');
-    print('GAME DETAILS: ${game['scores']}');
-    print('GAME ODD DETAILS: ${gameODDS['matchId']}');
-    print('=========================================');
+    // print('=========================================');
+    // print('GAME DETAILS: ${game['id']}');
+    // print('GAME DETAILS: ${game['scores']}');
+    // print('GAME ODD DETAILS: ${gameODDS['matchId']}');
+    // print('=========================================');
     // WE GET THE GAME ID HERE FIRST
     var _gameId = game['id'];
     // WE THEN GET THE BETSLIPS THAT HAVE THIS CURRENT GAME IN THEIR CONTENT
@@ -234,15 +231,15 @@ class _AddGameScoreState extends State<AddGameScore> {
       for (int _j = 0; _j < _betslipData.documents.length; _j++) {
         // STORE THE CURRENT BETSLIP INTO THIS VARIABLE
         var _currentBetslip = _betslipData.documents[_j];
-        print('**********************************************');
-        print('BETSLIP TO UPDATE RESULTS IS: ${_currentBetslip.documentID}');
+        // print('**********************************************');
+        // print('BETSLIP TO UPDATE RESULTS IS: ${_currentBetslip.documentID}');
         // print(_currentBetslip.documentID);
-        print(_currentBetslip['uid']);
-        print(_currentBetslip['status']);
-        print(_currentBetslip['update_status']);
-        print(_currentBetslip['trans_id']);
-        print(_currentBetslip['rewards']);
-        print('**********************************************');
+        // print(_currentBetslip['uid']);
+        // print(_currentBetslip['status']);
+        // print(_currentBetslip['update_status']);
+        // print(_currentBetslip['trans_id']);
+        // print(_currentBetslip['rewards']);
+        // print('**********************************************');
         // print(_betslipData);
         // NOW UPDATE EVERY SINGLE BETSLIP WITH CURRENT SCORE RESULTS
         // UPDATE ONLY THE USER BETSLIPS WITH REAL MATCH SCORE
@@ -292,24 +289,28 @@ class _AddGameScoreState extends State<AddGameScore> {
     // WE GET THE ODD ID
     int _oddID = _getGameTicket['oddIDs'][_gamePos];
     // WE GET THE ODD NAME
-    String _oddName = _getGameTicket['oddNames'][_gamePos];
+    String _oddName = _getGameTicket['oddNames'][_gamePos].toString();
     // WE GET THE ODD INDEX
     // int _oddIndex = _getGameTicket['oddIndexes'][_gamePos];
     // WE GET THE ODD LABEL
-    String _oddLabel = _getGameTicket['oddLabels'][_gamePos];
+    String _oddLabel = _getGameTicket['oddLabels'][_gamePos].toString();
+    // WE GET THE ODD TOTAL
+    String _oddTotal = _getGameTicket['oddTotals'][_gamePos].toString();
+    // WE GET THE ODD HANDICAP
+    String _oddHandicap = _getGameTicket['oddHandicaps'][_gamePos].toString();
     // PRINTING RESULTS MORE DETAILS
-    print('------- SHOWING SPECIFIC GAME ON TICKET DETAILS -----------');
-    print('Game ID: ${_getGameTicket['gameIDs'][_gamePos]}');
-    print('Odd ID: ${_getGameTicket['oddIDs'][_gamePos]}');
-    print('OddName: ${_getGameTicket['oddNames'][_gamePos]}');
-    print('OddIndex: ${_getGameTicket['oddIndexes'][_gamePos]}');
-    print('OddLabel: ${_getGameTicket['oddLabels'][_gamePos]}');
-    print('OddValue: ${_getGameTicket['oddValues'][_gamePos]}');
-    print('OddTotal: ${_getGameTicket['oddTotals'][_gamePos]}');
-    print('OddHandicap: ${_getGameTicket['oddHandicaps'][_gamePos]}');
-    print('Scores: ${_getGameTicket['teamScores'][_gamePos]}');
-    print('Results: ${_getGameTicket['teamResults'][_gamePos]}');
-    print('--------------- END OF DETAILS ---------------------');
+    // print('------- SHOWING SPECIFIC GAME ON TICKET DETAILS -----------');
+    // print('Game ID: ${_getGameTicket['gameIDs'][_gamePos]}');
+    // print('Odd ID: ${_getGameTicket['oddIDs'][_gamePos]}');
+    // print('OddName: ${_getGameTicket['oddNames'][_gamePos]}');
+    // print('OddIndex: ${_getGameTicket['oddIndexes'][_gamePos]}');
+    // print('OddLabel: ${_getGameTicket['oddLabels'][_gamePos]}');
+    // print('OddValue: ${_getGameTicket['oddValues'][_gamePos]}');
+    // print('OddTotal: ${_getGameTicket['oddTotals'][_gamePos]}');
+    // print('OddHandicap: ${_getGameTicket['oddHandicaps'][_gamePos]}');
+    // print('Scores: ${_getGameTicket['teamScores'][_gamePos]}');
+    // print('Results: ${_getGameTicket['teamResults'][_gamePos]}');
+    // print('--------------- END OF DETAILS ---------------------');
 
     // DO THE UPDATE BETSLIP LOGIC HERE
     // BY GETTING THE RIGHT WINNING VALUE FROM _GAME_ODDS VARIABLE
@@ -320,23 +321,23 @@ class _AddGameScoreState extends State<AddGameScore> {
     // AND UPDATE THE TICKET RESULTS OF THE BETSLIP
 
     // WORKING...
-    print(
-        '-- -- -- -- - -- - -- - - RANDOM DATA INIT - -- - - - - - -- - - -- - ');
-    print(_gameODDS['odds'][0]['id']); // ODD ID [1]
-    print(_gameODDS['odds'][0]['name']); // ODD NAME [1x2]
-    // WE WILL LOOP TO GET THE RIGHT GAME ODD ID POSITION
-    print(_gameODDS['odds'][0]['bookmaker']['data'][0]['id']); // BOOKMAKER ID
-    // BOOKMAKER NAME
-    print(_gameODDS['odds'][0]['bookmaker']['data'][0]['name']);
-    // data loop
-    print(_gameODDS['odds'][0]['bookmaker']['data'][0]['odds']['data'][0]
-        ['label']);
-    print(_gameODDS['odds'][0]['bookmaker']['data'][0]['odds']['data'][0]
-        ['value']);
-    print(_gameODDS['odds'][0]['bookmaker']['data'][0]['odds']['data'][0]
-        ['winning']);
-    print(
-        '-- -- -- -- - -- - -- - - RANDOM DATA END- -- - - - - - -- - - -- - ');
+    // print(
+    //     '-- -- -- -- - -- - -- - - RANDOM DATA INIT - -- - - - - - -- - - -- - ');
+    // print(_gameODDS['odds'][0]['id']); // ODD ID [1]
+    // print(_gameODDS['odds'][0]['name']); // ODD NAME [1x2]
+    // // WE WILL LOOP TO GET THE RIGHT GAME ODD ID POSITION
+    // print(_gameODDS['odds'][0]['bookmaker']['data'][0]['id']); // BOOKMAKER ID
+    // // BOOKMAKER NAME
+    // print(_gameODDS['odds'][0]['bookmaker']['data'][0]['name']);
+    // // data loop
+    // print(_gameODDS['odds'][0]['bookmaker']['data'][0]['odds']['data'][0]
+    //     ['label']);
+    // print(_gameODDS['odds'][0]['bookmaker']['data'][0]['odds']['data'][0]
+    //     ['value']);
+    // print(_gameODDS['odds'][0]['bookmaker']['data'][0]['odds']['data'][0]
+    //     ['winning']);
+    // print(
+    //     '-- -- -- -- - -- - -- - - RANDOM DATA END- -- - - - - - -- - - -- - ');
 
     // GET THE POSITION ODD ID OF DATA HERE
     int _bigPos = -1;
@@ -365,65 +366,93 @@ class _AddGameScoreState extends State<AddGameScore> {
     // LOOPING TO GET THE RIGHT INDEX HERE TOO
     for (int _j = 0; _j < _smallPosData.length; _j++) {
       // CHECK IF WE HAVE A MATCHED DATA
-      if (_smallPosData[_j]['label'].toString().compareTo(_oddLabel) == 0) {
+      // WE MATCH THE LABEL, TOTAL AND HANDICAP
+      // BUT WE NEED TO CONVERT THEM TO STRING DATA TYPE
+      if (_smallPosData[_j]['label'].toString().compareTo(_oddLabel) == 0 &&
+          _smallPosData[_j]['total'].toString().compareTo(_oddTotal) == 0 &&
+          _smallPosData[_j]['handicap'].toString().compareTo(_oddHandicap) ==
+              0) {
         // BREAK THE LOOP IF FOUND
         _smallPos = _j;
         break;
       }
     }
+    // WE HAVE TO MAKE SURE WE HAVE ONLY ONE LABEL NAME PER OPTION
+    // SO THAT WE WILL AVOID GETTING WRONG RESULTS AGAIN AND AGAIN
+    // print('*********************************');
+    // print(_smallPosData);
+    // print('ODD ID original: $_oddID');
+    // print('ODD ID position: $_bigPos');
+    // print('ODD Index position: $_smallPos');
+    // print('ODD Index original: $_oddIndex');
 
     if (_bigPos != -1 && _smallPos != -1) {
       // WE ARE NOW PRINTING THE RIGHT DATA VALUE
-      print(
-          '-- -- -- -- - -- - -- - - RANDOM DATA INIT - -- - - - - - -- - - -- - ');
-      print(_gameODDS['odds'][_bigPos]['id']); // ODD ID [1]
-      print(_gameODDS['odds'][_bigPos]['name']); // ODD NAME [1x2]
-      // WE WILL LOOP TO GET THE RIGHT GAME ODD ID POSITION
-      // BOOKMAKER ID
-      print(_gameODDS['odds'][_bigPos]['bookmaker']['data'][0]['id']);
-      // BOOKMAKER NAME
-      print(_gameODDS['odds'][_bigPos]['bookmaker']['data'][0]['name']);
-      // data loop
-      print(_gameODDS['odds'][_bigPos]['bookmaker']['data'][0]['odds']['data']
-          [_smallPos]['label']);
-      print(_gameODDS['odds'][_bigPos]['bookmaker']['data'][0]['odds']['data']
-          [_smallPos]['value']);
-      print(_gameODDS['odds'][_bigPos]['bookmaker']['data'][0]['odds']['data']
-          [_smallPos]['winning']);
-      print(
-          '-- -- -- -- - -- - -- - - RANDOM DATA END- -- - - - - - -- - - -- - ');
+      // print(
+      //     '-- -- -- -- - -- - -- - - RANDOM DATA INIT - -- - - - - - -- - - -- - ');
+      // print(_gameODDS['odds'][_bigPos]['id']); // ODD ID [1]
+      // print(_gameODDS['odds'][_bigPos]['name']); // ODD NAME [1x2]
+      // // WE WILL LOOP TO GET THE RIGHT GAME ODD ID POSITION
+      // // BOOKMAKER ID
+      // print(_gameODDS['odds'][_bigPos]['bookmaker']['data'][0]['id']);
+      // // BOOKMAKER NAME
+      // print(_gameODDS['odds'][_bigPos]['bookmaker']['data'][0]['name']);
+      // // data loop
+      // print(_gameODDS['odds'][_bigPos]['bookmaker']['data'][0]['odds']['data']
+      //     [_smallPos]['label']);
+      // print(_gameODDS['odds'][_bigPos]['bookmaker']['data'][0]['odds']['data']
+      //     [_smallPos]['value']);
+      // print(_gameODDS['odds'][_bigPos]['bookmaker']['data'][0]['odds']['data']
+      //     [_smallPos]['winning']);
+      // print(
+      //     '-- -- -- -- - -- - -- - - RANDOM DATA END- -- - - - - - -- - - -- - ');
 
       // GET THE RIGHT WINNING OF THIS GAME FROM ODDS COLLECTION
       var _winning = _gameODDS['odds'][_bigPos]['bookmaker']['data'][0]['odds']
           ['data'][_smallPos]['winning'];
+
       // GET THE RIGHT GAME SCORES HERE TOO FROM FOOTBALL COLLECTION
+      // print('-- --- --- --- --- -- ');
       var _scores = _game['scores'];
       // THIS IS EQUAL TO THE CURRENT TEAM SCORES OF THE BETSLIP
       var _scoreUpdated = _getGameTicket['teamScores'];
+      // print(_scoreUpdated);
       // WE UPDATE THE SPECIFIC DATA AT INDEX _GAME_POSITION
       _scoreUpdated[_gamePos] = _scores;
 
       // THIS IS EQUAL TO THE CURRENT TEAM SCORES OF THE BETSLIP
       var _resultUpdated = _getGameTicket['teamResults'];
+      // print(_resultUpdated);
       // WE UPDATE THE SPECIFIC DATA AT INDEX _GAME_POSITION
       _resultUpdated[_gamePos] = _winning;
 
       // PRINTING LAST DATA
-      print('SCORES: $_scores');
-      print('RESULT: $_winning');
+      // print('-- --- --- --- --- -- ');
+      // print('SCORES: $_scores');
+      // print('RESULT: $_winning');
+      // print('-- --- --- --- --- -- ');
+      // print(_scoreUpdated);
+      // print(_resultUpdated);
+      // print('-- --- --- --- --- -- ');
 
       // print('Results: ${_getGameTicket['teamResults'][_gamePos]}');
       // GET THE BETSLIP ID
       String _betslipID = _currentBetslip.documentID.toString();
-
+      // print(_betslipID);
+      // print('----------------------------------------------------------');
+      // UPDATING THE BETSLIP WITH NEW RESULTS UP TO DATE
       Firestore.instance.collection('betslip').document(_betslipID).updateData(
         {
-          'teamScores': _scoreUpdated, // UPDATE SCORE AT SPECIFIC INDEX ONLY
-          'teamResults': _resultUpdated, // UPDATE RESULT AT SPECIFIC INDEX ONLY
+          'matches.teamScores': _scoreUpdated, // UPDATE SCORE AT SPECIFIC INDEX ONLY
+          'matches.teamResults': _resultUpdated, // UPDATE RESULT AT SPECIFIC INDEX ONLY
+          // // INDICATES THAT BETSLIPS HAVE BEEN UPDATED WITH THIS GAME RESULTS ALREADY
+          // 'betslip_updated': true,
         },
       ).then((value) {
+        // IF EVERYTHING WORKS FINE
         print('The betslip of ID: $_betslipID has been updated successfully');
       }).catchError((e) {
+        // IN CASE WE HAVE AN ERROR
         print('Error ocuured while updating betslip of ID: $_betslipID');
       });
     } else {
